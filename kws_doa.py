@@ -9,7 +9,8 @@ import pyaudio
 from datetime import datetime, date
 from requests import Request, Session
 import json
-
+from pixel_ring import pixel_ring
+from gpiozero import LED
 
 
 RATE = 16000
@@ -63,11 +64,13 @@ def call_gateway(command):
 	print(resp.status_code)
 	print(resp.text)
 
-detector = SnowboyDetect('snowboy/resources/common.res', 'snowboy/resources/alexa/alexa_02092017.umdl')
+detector = SnowboyDetect('snowboy/resources/common.res', 'ok_gateway.pmdl')
 detector.SetAudioGain(1)
 detector.SetSensitivity('0.5')
 ring_buffer = RingBuffer(detector.NumChannels() * detector.SampleRate() * 5)
 audio = pyaudio.PyAudio()
+power = LED(5)
+power.on()
 
 def main():
     history = collections.deque(maxlen=int(DOA_FRAMES / KWS_FRAMES))
@@ -86,7 +89,8 @@ def main():
 				dtstart = datetime.utcnow()
                     		frames = np.concatenate(history)
                     		direction = mic.get_direction(frames)
-       				# pixel_ring.set_direction(direction)
+				pixel_ring.wakeup(direction)
+				pixel_ring.speak()
                     		print('\n{}'.format(int(direction)))
 		else:
                         dtend = datetime.utcnow()
@@ -94,7 +98,8 @@ def main():
 			print('recording', recordingtime, len(chunk))
 			newFileByteArray = bytearray(chunk[0::CHANNELS])
 			newFile.write(newFileByteArray)
-			if (recordingtime > 3):
+			if (recordingtime > 4):
+				pixel_ring.think()
 				# salva arquivo no disco
 				newFile.close()
 				# convert para apenas um canal
@@ -105,6 +110,7 @@ def main():
 				print('gocloud', kaldi_result)
 				call_gateway(kaldi_result)
 				recording = False;
+				pixel_ring.off()
 
     except KeyboardInterrupt:
         pass
