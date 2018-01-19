@@ -1,0 +1,16 @@
+[Unit]
+Description=Mozilla IoT Speech Controller
+After=network.target
+
+[Service]
+Type=simple
+User=root
+StandardOutput=journal
+StandardError=journal
+# Edit this line, if needed, to specify where you installed the server
+WorkingDirectory=/home/pi/respeaker/mic_array
+# Edit this line, if needed, to set the correct path to node
+ExecStart=/bin/bash /home/pi/respeaker/mic_array/start.sh
+
+[Install]
+WantedBy=multi-user.target
