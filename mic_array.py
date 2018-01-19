@@ -20,7 +20,7 @@ MAX_TDOA_4 = MIC_DISTANCE_4 / float(SOUND_SPEED)
 
 class MicArray(object):
 
-    def __init__(self, rate=16000, channels=8, chunk_size=None):
+    def __init__(self, rate=16000, channels=4, chunk_size=None):
         self.pyaudio_instance = pyaudio.PyAudio()
         self.queue = Queue.Queue()
         self.quit_event = threading.Event()
@@ -87,7 +87,7 @@ class MicArray(object):
 
     def get_direction(self, buf):
         best_guess = None
-        if self.channels == 8:
+        if self.channels == 4:
             MIC_GROUP_N = 3
             MIC_GROUP = [[1, 4], [2, 5], [3, 6]]
 
