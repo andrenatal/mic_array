@@ -70,7 +70,7 @@ def goCloud(newFile):
 	kaldi_result = call_kaldi()
 	# com o resultado chama o gateway
 	print('gocloud', kaldi_result)
-	#call_gateway(kaldi_result)
+	call_gateway(kaldi_result)
 	recording = False;
 	pixel_ring.off()
 	skip = False
